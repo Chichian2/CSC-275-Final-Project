@@ -17,8 +17,13 @@ class Game:
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        self.ground = pg.sprite.Group()
         self.player = Player(self)
         self.all_sprites.add(self.player)
+        for ground in GROUND:
+            g = Ground(*ground)
+            self.all_sprites.add(g)
+            self.ground.add(g)
         for plat in PLATFORM_LIST:
             p = Platform(*plat)
             self.all_sprites.add(p)
@@ -37,11 +42,30 @@ class Game:
     def update(self):
         # Game Loop - Update
         self.all_sprites.update()
-        # check if player hits a platform - only if falling
+        self.platforms.update()
+        
+        # check if player hits a platform
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
                 self.player.pos.y = hits[0].rect.top
+                self.player.vel.y = 0
+        if self.player.vel.y < 0:
+            hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+            if hits:
+                self.player.pos.y = hits[0].rect.bottom + 40
+                self.player.vel.y = 0
+
+        #check if player hits the ground
+        if self.player.vel.y > 0:
+            hits = pg.sprite.spritecollide(self.player, self.ground, False)
+            if hits:
+                self.player.pos.y = hits[0].rect.top
+                self.player.vel.y = 0
+        if self.player.vel.y < 0:
+            hits = pg.sprite.spritecollide(self.player, self.ground, False)
+            if hits:
+                self.player.pos.y = hits[0].rect.bottom + 40
                 self.player.vel.y = 0
 
     def events(self):
