@@ -21,6 +21,13 @@ class Game:
         self.powerups = pg.sprite.Group()
         self.powerups.add(Grappling_Hook(70,80))
         self.player = Player(self)
+        #Hearts
+        a1 = Hearts(10,10,1, self)
+        a2 = Hearts(10,40,2, self)
+        a3 = Hearts(10,70,3, self)
+        self.all_sprites.add(a1)
+        self.all_sprites.add(a2)
+        self.all_sprites.add(a3)
         self.all_sprites.add(self.powerups)
         self.all_sprites.add(self.player)
         for ground in GROUND:

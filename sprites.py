@@ -16,7 +16,11 @@ class Player(pg.sprite.Sprite):
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
+        #power up item
         self.powerup = 0
+
+        #player's hp
+        self.health = 3
 
         #variables for grappling hook.
         self.movingx = False
@@ -34,6 +38,17 @@ class Player(pg.sprite.Sprite):
             hits[0].rect.y = 565
             self.tempobj = hits[0]
 
+    #Checks collision to see if player takes damage
+    def take_damage(self):
+        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        if hits and (hits[0].rect.y <= self.rect.y or hits[0].rect.x >= self.rect.x+30):
+            self.rect.y = hits[0].rect.y-50
+            self.health-=1
+            if self.health <= 0:
+                if self.game.playing:
+                    self.game.playing = False
+                self.game.running = False
+
     def jump(self):
         # jump only if standing on a platform or the ground
         self.rect.x += 1
@@ -48,6 +63,7 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.acc = vec(0, PLAYER_GRAV)
+        self.take_damage()
         self.collide_with_powerup()
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
@@ -163,7 +179,7 @@ class Platform(pg.sprite.Sprite):
         if self.rect.right <= 0:
             self.rect.x += random.randrange(600, 700)
             self.rect.y += random.randrange(-50, 50)
-            if random.randrange(1,100) > 80:
+            if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
                 print(random.randrange(1,100))
                 g = Grappling_Hook(600, self.rect.y - 20)
                 self.game.all_sprites.add(g)
@@ -181,7 +197,6 @@ class Ground(pg.sprite.Sprite):
 
 class Grappling_Hook(pg.sprite.Sprite):
     def __init__(self, x, y):
-        print("Works")
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((20,20))
         self.image.fill(RED)
@@ -191,5 +206,20 @@ class Grappling_Hook(pg.sprite.Sprite):
 
     def update(self):
         self.rect.x-=3
-            
 
+
+#sprite for hearts to represent health
+class Hearts(pg.sprite.Sprite):
+    def __init__(self, x, y, number, game):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((20, 20))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.number = number
+        self.game = game
+
+    def update(self):
+        if self.game.player.health < self.number:
+            self.kill()
