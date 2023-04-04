@@ -18,14 +18,17 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.ground = pg.sprite.Group()
+        self.powerups = pg.sprite.Group()
+        self.powerups.add(Grappling_Hook(70,80))
         self.player = Player(self)
+        self.all_sprites.add(self.powerups)
         self.all_sprites.add(self.player)
         for ground in GROUND:
             g = Ground(*ground)
             self.all_sprites.add(g)
             self.ground.add(g)
         for plat in PLATFORM_LIST:
-            p = Platform(*plat)
+            p = Platform(*plat,self)
             self.all_sprites.add(p)
             self.platforms.add(p)
         self.run()
@@ -84,6 +87,9 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        # draws line for grappling hook
+        if self.player.movingx:
+            pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
         # *after* drawing everything, flip the display
         pg.display.flip()
 

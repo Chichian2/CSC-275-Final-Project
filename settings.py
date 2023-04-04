@@ -42,3 +42,8 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 LIGHTBLUE = (0, 155, 155)
+
+#Definitions for Grappling hook
+RANGE = 250
+DISTFROMBOTPLAT = 60
+SPEEDMULT = 0.07
