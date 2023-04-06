@@ -1,6 +1,7 @@
 # Sprite classes for platform game
 import pygame as pg
 import random
+import os
 import math
 from settings import *
 vec = pg.math.Vector2
@@ -12,7 +13,6 @@ class Player(pg.sprite.Sprite):
         self.image = pg.Surface((30, 40))
         self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
@@ -21,6 +21,35 @@ class Player(pg.sprite.Sprite):
 
         #player's hp
         self.health = 3
+
+        #for animation
+        self.animation_list = []
+        self.frame_index = 0
+        self.action = 0
+        self.update_time = pg.time.get_ticks()
+        self.in_air=False
+        self.moving_left = False
+        self.moving_right = False
+
+        #load all images for player
+        scale=2
+        animation_types = ['Idle', 'RunR', 'RunL','Jump','Grappling']
+        for animation in animation_types:
+            #reset temporary list of images
+            temp_list = []
+            #count number of files in files in the folder
+            num_of_frames = len(os.listdir(f'img/player/{animation}'))
+            for i in range(num_of_frames):
+                img = pg.image.load(f'img/player/{animation}/{i}.png').convert_alpha()
+                img = pg.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+                temp_list.append(img)
+            self.animation_list.append(temp_list)
+
+        self.image = self.animation_list[self.action][self.frame_index]
+        self.rect = self.image.get_rect()
+        self.rect.center = (0,0)
+
+
 
         #variables for grappling hook.
         self.movingx = False
@@ -68,21 +97,25 @@ class Player(pg.sprite.Sprite):
         self.collide_with_powerup()
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
+            self.moving_left = True
             if keys[pg.K_LSHIFT]:
                 self.acc.x = -PLAYER_ACC*2
             else:
                 self.acc.x = -PLAYER_ACC
-        if keys[pg.K_RIGHT]:
+        elif keys[pg.K_RIGHT]:
+            self.moving_right = True
             if keys[pg.K_LSHIFT]:
                 self.acc.x = PLAYER_ACC*2
             else:
                 self.acc.x = PLAYER_ACC
-        if keys[pg.K_a]:
+        elif keys[pg.K_a]:
+            self.moving_left = True
             if keys[pg.K_LSHIFT]:
                 self.acc.x = -PLAYER_ACC*2
             else:
                 self.acc.x = -PLAYER_ACC
-        if keys[pg.K_d]:
+        elif keys[pg.K_d]:
+            self.moving_right = True
             if keys[pg.K_LSHIFT]:
                 self.acc.x = PLAYER_ACC*2
             else:
@@ -121,7 +154,26 @@ class Player(pg.sprite.Sprite):
                     self.movingy = True
                 #    self.pos.y -= 1
                 #    self.rect.midbottom = self.pos
+        elif not keys[pg.K_LEFT]:
+            self.moving_left = False
+        elif not keys[pg.K_RIGHT]:
+            self.moving_right= False
+        elif not keys[pg.K_a]:
+            self.moving_left = False
+        elif not keys[pg.K_d]:
+            self.moving_right= False
 
+        if self.in_air:
+            self.update_action(3)
+        elif self.movingx:
+            self.update_action(4)
+        elif self.moving_left:
+            self.update_action(2)
+        elif self.moving_right:
+            self.update_action(1)
+        else:
+            self.update_action(0)
+        
         if self.pos.x < self.tempx and self.movingx:
             #self.acc.x = PLAYER_ACC
             self.pos.x += self.distx
@@ -157,6 +209,32 @@ class Player(pg.sprite.Sprite):
             self.vel.x = 0
 
         self.rect.midbottom = self.pos
+        self.update_animation()
+
+
+    def update_animation(self):
+        #update animation
+        ANIMATION_COOLDOWN = 100
+        #update image depending on current frame
+        self.image = self.animation_list[self.action][self.frame_index]
+        #check if enough time has passed since the last update
+        if pg.time.get_ticks() - self.update_time > ANIMATION_COOLDOWN:
+            self.update_time = pg.time.get_ticks()
+            self.frame_index += 1
+        #if the animation has run out the reset back to the start
+        if self.frame_index >= len(self.animation_list[self.action]):
+            if self.action == 5:
+                self.frame_index = len(self.animation_list[self.action]) - 1
+            else:
+                self.frame_index = 0
+
+    def update_action(self, new_action):
+        #check if the new action is different to the previous one
+        if new_action != self.action:
+            self.action = new_action
+            #update the animation settings
+            self.frame_index = 0
+            self.update_time = pg.time.get_ticks()
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h,game):
