@@ -41,13 +41,14 @@ class Player(pg.sprite.Sprite):
     #Checks collision to see if player takes damage
     def take_damage(self):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-        if hits and (hits[0].rect.y <= self.rect.y or hits[0].rect.x >= self.rect.x+30):
-            self.rect.y = hits[0].rect.y-50
-            self.health-=1
-            if self.health <= 0:
-                if self.game.playing:
-                    self.game.playing = False
-                self.game.running = False
+        if hits and hits[0].rect.x >= self.rect.x:
+            if self.rect.y < hits[0].rect.y and self.rect.y > hits[0].rect.y-20:
+                self.rect.y = hits[0].rect.y-50
+                self.health-=1
+                if self.health <= 0:
+                    if self.game.playing:
+                        self.game.playing = False
+                    self.game.running = False
 
     def jump(self):
         # jump only if standing on a platform or the ground
@@ -89,7 +90,7 @@ class Player(pg.sprite.Sprite):
         elif keys[pg.K_t]:
             self.powerup = 1
             self.tempobj = Grappling_Hook(80,80)
-        elif keys[pg.K_q]:
+        elif keys[pg.K_x]:
             if self.powerup == 1:
                 self.tempobj.kill()
                 self.powerup = 0
@@ -179,7 +180,7 @@ class Platform(pg.sprite.Sprite):
         if self.rect.right <= 0:
             self.rect.x += random.randrange(600, 700)
             self.rect.y += random.randrange(-50, 50)
-            if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
+            if random.randrange(1,100) > 70 and self.game.player.powerup != 1:
                 print(random.randrange(1,100))
                 g = Grappling_Hook(600, self.rect.y - 20)
                 self.game.all_sprites.add(g)
