@@ -260,10 +260,49 @@ class Platform(pg.sprite.Sprite):
         self.image = pg.Surface((w, h))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
         self.width = w
         self.height = h
+
+        #for animation
+        self.animation_list = []
+        self.frame_index = 0
+        self.action = 0
+        self.update_time = pg.time.get_ticks()
+
+        scale=2
+        bullet_types = ['NBullet']
+        for animation in bullet_types:
+            #reset temporary list of images
+            temp_list = []
+            #count number of files in files in the folder
+            num_of_frames = len(os.listdir(f'img/Bullet/{animation}'))
+            for i in range(num_of_frames):
+                img = pg.image.load(f'img/Bullet/{animation}/{i}.png').convert_alpha()
+                img = pg.transform.scale(img, (w, h))
+                temp_list.append(img)
+            self.animation_list.append(temp_list)
+
+        self.image = self.animation_list[self.action][self.frame_index]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        
+
+    def update_animation(self):
+        #update animation
+        ANIMATION_COOLDOWN = 100
+        #update image depending on current frame
+        self.image = self.animation_list[self.action][self.frame_index]
+        #check if enough time has passed since the last update
+        if pg.time.get_ticks() - self.update_time > ANIMATION_COOLDOWN:
+            self.update_time = pg.time.get_ticks()
+            self.frame_index += 1
+        #if the animation has run out the reset back to the start
+        if self.frame_index >= len(self.animation_list[self.action]):
+            if self.action == 5:
+                self.frame_index = len(self.animation_list[self.action]) - 1
+            else:
+                self.frame_index = 0
 
     def update(self):
         #shotgun level
@@ -272,6 +311,7 @@ class Platform(pg.sprite.Sprite):
         #    self.rect.x += 600
         #machine gun level
         self.rect.x-=2
+        self.update_animation()
         if self.rect.right <= 0:
             self.rect.x += random.randrange(600, 700)
             self.rect.y += random.randrange(-50, 50)
