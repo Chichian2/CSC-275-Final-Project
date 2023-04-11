@@ -19,7 +19,7 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.ground = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
-        self.powerups.add(Grappling_Hook(70,80))
+        self.powerups.add(Item(70,80,"Grappling_Hook"))
         self.player = Player(self)
         #Hearts
         a1 = Hearts(10,10,1, self)

@@ -3,6 +3,7 @@ import pygame as pg
 import random
 import os
 import math
+import pytweening as tween
 from settings import *
 vec = pg.math.Vector2
 
@@ -16,8 +17,8 @@ class Player(pg.sprite.Sprite):
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
-        #power up item
-        self.powerup = 0
+        #power up items
+        self.powerup = []
 
         #player's hp
         self.health = 3
@@ -59,20 +60,62 @@ class Player(pg.sprite.Sprite):
         self.distx = 0
         self.disty = 0
 
+    def grappling_math(self):
+        self.powerup.remove("Grappling_Hook")
+        self.tempx = self.pos.x
+        self.tempy = self.pos.y
+        length = RANGE
+        for plat in self.game.platforms:
+            self.acc.y = 0
+            # condition that was on if statement plat.rect.x > self.tempx and plat.rect.x < self.pos.x + 200
+            if (plat.rect.x + plat.width/2) > self.pos.x and plat.rect.y < self.pos.y:
+                lengthx = ((plat.rect.x + (plat.width/2)) - self.pos.x)
+                lengthy = (self.pos.y - (plat.rect.y + 60))
+                if(math.sqrt((lengthx**2) + (lengthy**2)) <= length):
+                    length = math.sqrt((lengthx**2) + (lengthy**2))
+                    self.tempx = plat.rect.x + (plat.width/2)
+                    self.tempy = plat.rect.y + plat.height
+                    print(plat)
+        print(self.tempx)
+        print(self.tempy) 
+        if self.pos.x < self.tempx:
+            self.movingx = True
+            self.distx = (self.tempx - self.pos.x) * SPEEDMULT
+            #self.update()
+            #pg.time.wait(5)
+        if self.pos.y > self.tempy + 60:
+            self.disty = (self.pos.y - (self.tempy + 60)) * SPEEDMULT
+            self.acc.y = 0
+            self.movingy = True
+        #    self.pos.y -= 1
+        #    self.rect.midbottom = self.pos
+
     def collide_with_powerup(self):
-        hits = pg.sprite.spritecollide(self, self.game.powerups, False)
+        hits = pg.sprite.spritecollide(self, self.game.powerups, True)
         if hits:
-            self.powerup  = 1
-            hits[0].rect.x = 20
-            hits[0].rect.y = 565
-            self.tempobj = hits[0]
+            if hits[0].typ == "Health":
+                if self.health == 1:
+                    self.health +=1
+                    a2 = Hearts(10,40,2, self.game)
+                    self.game.all_sprites.add(a2)
+                elif self.health == 2:
+                    self.health +=1
+                    a3 = Hearts(10,70,3, self.game)
+                    self.game.all_sprites.add(a3)
+                return
+            self.powerup.append(hits[0].typ)
+            print(str(self.powerup))
 
     #Checks collision to see if player takes damage
     def take_damage(self):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-        if hits and hits[0].rect.x >= self.rect.x:
-            if self.rect.y < hits[0].rect.y and self.rect.y > hits[0].rect.y-20:
+        if hits and hits[0].rect.x > self.rect.x+10:
+            if self.rect.y < hits[0].rect.y+20 and self.rect.y > hits[0].rect.y-20:
                 self.rect.y = hits[0].rect.y-50
+                if "Bullet_Shield" in self.powerup:
+                    print("worked")
+                    self.powerup.remove("Bullet_Shield")
+                    return
                 self.health-=1
                 if self.health <= 0:
                     if self.game.playing:
@@ -80,15 +123,17 @@ class Player(pg.sprite.Sprite):
                     self.game.running = False
 
     def jump(self):
-        # jump only if standing on a platform or the ground
+        # jump only if standing on a platform or the ground or you have double jump power up.
         self.rect.x += 1
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        hits2 = pg.sprite.spritecollide(self, self.game.ground, False)
         self.rect.x -= 1
         if hits:
             self.vel.y = -20
-        hits = pg.sprite.spritecollide(self, self.game.ground, False)
-        self.rect.x -= 1
-        if hits:
+        elif hits2:
+            self.vel.y = -20
+        elif"Double_Jump" in self.powerup:
+            self.powerup.remove("Double_Jump")
             self.vel.y = -20
 
     def update(self):
@@ -122,38 +167,10 @@ class Player(pg.sprite.Sprite):
                 self.acc.x = PLAYER_ACC
         elif keys[pg.K_t]:
             self.powerup = 1
-            self.tempobj = Grappling_Hook(80,80)
+            self.tempobj = Item(80,80,"Grappling_Hook")
         elif keys[pg.K_x]:
-            if self.powerup == 1:
-                self.tempobj.kill()
-                self.powerup = 0
-                self.tempx = self.pos.x
-                self.tempy = self.pos.y
-                length = RANGE
-                for plat in self.game.platforms:
-                    self.acc.y = 0
-                    # condition that was on if statement plat.rect.x > self.tempx and plat.rect.x < self.pos.x + 200
-                    if (plat.rect.x + plat.width/2) > self.pos.x and plat.rect.y < self.pos.y:
-                        lengthx = ((plat.rect.x + (plat.width/2)) - self.pos.x)
-                        lengthy = (self.pos.y - (plat.rect.y + 60))
-                        if(math.sqrt((lengthx**2) + (lengthy**2)) <= length):
-                            length = math.sqrt((lengthx**2) + (lengthy**2))
-                            self.tempx = plat.rect.x + (plat.width/2)
-                            self.tempy = plat.rect.y + plat.height
-                            print(plat)
-                print(self.tempx)
-                print(self.tempy) 
-                if self.pos.x < self.tempx:
-                    self.movingx = True
-                    self.distx = (self.tempx - self.pos.x) * SPEEDMULT
-                    #self.update()
-                    #pg.time.wait(5)
-                if self.pos.y > self.tempy + 60:
-                    self.disty = (self.pos.y - (self.tempy + 60)) * SPEEDMULT
-                    self.acc.y = 0
-                    self.movingy = True
-                #    self.pos.y -= 1
-                #    self.rect.midbottom = self.pos
+            if "Grappling_Hook" in self.powerup:
+                self.grappling_math()
         elif not keys[pg.K_LEFT]:
             self.moving_left = False
         elif not keys[pg.K_RIGHT]:
@@ -258,9 +275,16 @@ class Platform(pg.sprite.Sprite):
         if self.rect.right <= 0:
             self.rect.x += random.randrange(600, 700)
             self.rect.y += random.randrange(-50, 50)
-            if random.randrange(1,100) > 70 and self.game.player.powerup != 1:
-                print(random.randrange(1,100))
-                g = Grappling_Hook(600, self.rect.y - 20)
+            if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
+                itemSpawned = random.randrange(1,5)
+                if itemSpawned == 1:
+                    g = Item(600, self.rect.y - 20,"Grappling_Hook")
+                if itemSpawned == 2:
+                    g = Item(600, self.rect.y - 20,"Double_Jump")
+                if itemSpawned == 3:
+                    g = Item(600, self.rect.y - 20,"Bullet_Shield")
+                if itemSpawned == 4:
+                    g = Item(600, self.rect.y - 20,"Health")
                 self.game.all_sprites.add(g)
                 self.game.powerups.add(g)
         
@@ -274,17 +298,29 @@ class Ground(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-class Grappling_Hook(pg.sprite.Sprite):
-    def __init__(self, x, y):
+#Class to handle all Items
+class Item(pg.sprite.Sprite):
+    def __init__(self, x, y, typ):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((20,20))
-        self.image.fill(RED)
+        self.image.fill(ITEM_IMAGE[typ])
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.pos = vec(x,y)
+        self.rect.center = (x,y)
+        self.typ = typ
+        self.tween = tween.easeInOutSine
+        self.step = 0
+        self.dir = 1
 
     def update(self):
-        self.rect.x-=3
+        self.rect.centerx-=3
+        #bobing motion
+        offset = BOB_RANGE * (self.tween(self.step / BOB_RANGE) - 0.5)
+        self.rect.centery = self.pos.y + offset * self.dir
+        self.step += BOB_SPEED
+        if self.step >= BOB_RANGE:
+            self.step = 0
+            self.dir *= -1
 
 
 #sprite for hearts to represent health

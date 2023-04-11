@@ -47,3 +47,8 @@ LIGHTBLUE = (0, 155, 155)
 RANGE = 250
 DISTFROMBOTPLAT = 60
 SPEEDMULT = 0.07
+
+#Items
+ITEM_IMAGE = {"Grappling_Hook": RED, "Double_Jump": BLUE, "Bullet_Shield": LIGHTBLUE, "Health": GREEN}
+BOB_RANGE = 2
+BOB_SPEED = 0.1
