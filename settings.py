@@ -52,3 +52,6 @@ SPEEDMULT = 0.07
 ITEM_IMAGE = {"Grappling_Hook": RED, "Double_Jump": BLUE, "Bullet_Shield": LIGHTBLUE, "Health": GREEN}
 BOB_RANGE = 2
 BOB_SPEED = 0.1
+
+#Sounds
+EFFECT_SOUNDS = {'Grappling_Hook': 'Grappling_Hook_Powerup.wav','Double_Jump': 'Jump.wav', 'Bullet_Shield': 'Bullet_Shield.wav', 'Health': 'Health.wav', 'Damage': 'Damage.wav', 'Death': 'Death.wav'}

@@ -1,5 +1,6 @@
 import pygame as pg
 import random
+import os
 from os import path
 from settings import *
 from sprites import *
@@ -26,7 +27,7 @@ class Game:
         with open(path.join(level_folder, self.levels[self.level]), 'rt') as f:
             print(f)
             for line in f:
-                self.map_data.append(line)
+                self.map_data.append(line.replace('\n',''))
         self.new()
 
     def new(self):
@@ -52,15 +53,15 @@ class Game:
             self.ground.add(g)
         print(self.map_data[1])
         print(self.map_data)
-        if self.map_data[1] == "MachineGun\n":
+        if self.map_data[1] == "MachineGun":
             print("worked")
             for plat in MGPLATFORM_LIST:
-                p = Platform(*plat,self)
+                p = Platform(*plat,self,"Machine_Gun")
                 self.all_sprites.add(p)
                 self.platforms.add(p)
-        elif self.map_data[1] == "ShotGun\n":
+        elif self.map_data[1] == "ShotGun":
             for plat in SGPLATFORM_LIST:
-                p = Platform(*plat,self)
+                p = Platform(*plat,self,"Shot_Gun")
                 self.all_sprites.add(p)
                 self.platforms.add(p)
         self.paused = False

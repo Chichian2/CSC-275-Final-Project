@@ -1,7 +1,9 @@
 # Sprite classes for platform game
 import pygame as pg
 import random
+import time
 import os
+from os import path
 import math
 import pytweening as tween
 from settings import *
@@ -68,7 +70,7 @@ class Player(pg.sprite.Sprite):
         for plat in self.game.platforms:
             self.acc.y = 0
             # condition that was on if statement plat.rect.x > self.tempx and plat.rect.x < self.pos.x + 200
-            if (plat.rect.x + plat.width/2) > self.pos.x and plat.rect.y < self.pos.y:
+            if (plat.rect.x + plat.width/2) > self.pos.x and plat.rect.x < WIDTH and plat.rect.y < self.pos.y:
                 lengthx = ((plat.rect.x + (plat.width/2)) - self.pos.x)
                 lengthy = (self.pos.y - (plat.rect.y + 60))
                 if(math.sqrt((lengthx**2) + (lengthy**2)) <= length):
@@ -91,6 +93,13 @@ class Player(pg.sprite.Sprite):
         #    self.rect.midbottom = self.pos
 
     def collide_with_powerup(self):
+        game_folder = path.dirname(__file__)
+        snd_folder = path.join(game_folder, 'snd')
+        
+        self.effects_sounds = {}
+        for type in EFFECT_SOUNDS:
+            self.effects_sounds[type] = pg.mixer.Sound(path.join(snd_folder, EFFECT_SOUNDS[type]))
+            
         hits = pg.sprite.spritecollide(self, self.game.powerups, True)
         if hits:
             if hits[0].typ == "Health":
@@ -104,13 +113,15 @@ class Player(pg.sprite.Sprite):
                     self.health +=1
                     a3 = Hearts(10,70,3, self.game)
                     self.game.all_sprites.add(a3)
+                else:
+                    self.effects_sounds['Health'].play()
                 return
-##            elif hits[0].typ == "Grappling_Hook":
-##                #insert sound for grappling hook
-##            elif hits[0].typ == "Double_Jump":
-##                #Insert sound for double jump
-##            elif hits[0].typ == "Bullet_Shield":
-##                #Insert sound for bullet shield
+            elif hits[0].typ == "Grappling_Hook":
+                self.effects_sounds['Grappling_Hook'].play()
+            elif hits[0].typ == "Double_Jump":
+                self.effects_sounds['Double_Jump'].play()
+            elif hits[0].typ == "Bullet_Shield":
+                self.effects_sounds['Bullet_Shield'].play()
             self.powerup.append(hits[0].typ)
             print(str(self.powerup))
 
@@ -120,12 +131,15 @@ class Player(pg.sprite.Sprite):
         if hits and hits[0].rect.x > self.rect.x+10:
             if self.rect.y < hits[0].rect.y+10 and self.rect.y > hits[0].rect.y-10:
                 self.rect.y = hits[0].rect.y-50
+                self.effects_sounds['Damage'].play()
                 if "Bullet_Shield" in self.powerup:
                     print("worked")
                     self.powerup.remove("Bullet_Shield")
                     return
                 self.health-=1
                 if self.health <= 0:
+                    self.effects_sounds['Death'].play()
+                    time.sleep(2)
                     if self.game.playing:
                         self.game.playing = False
                     self.game.running = False
@@ -262,7 +276,7 @@ class Player(pg.sprite.Sprite):
             self.update_time = pg.time.get_ticks()
 
 class Platform(pg.sprite.Sprite):
-    def __init__(self, x, y, w, h,game):
+    def __init__(self, x, y, w, h,game,typ):
         pg.sprite.Sprite.__init__(self)
         self.game = game
         self.image = pg.Surface((w, h))
@@ -270,6 +284,7 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.width = w
         self.height = h
+        self.type =typ
 
         #for animation
         self.animation_list = []
@@ -314,27 +329,29 @@ class Platform(pg.sprite.Sprite):
 
     def update(self):
         #shotgun level
-        #self.rect.x-=2
-        #if self.rect.right <= 0:
-        #    self.rect.x += 600
-        #machine gun level
-        self.rect.x-=2
         self.update_animation()
-        if self.rect.right <= 0:
-            self.rect.x += random.randrange(600, 700)
-            self.rect.y += random.randrange(-50, 50)
-            if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
-                itemSpawned = random.randrange(1,5)
-                if itemSpawned == 1:
-                    g = Item(600, self.rect.y - 20,"Grappling_Hook")
-                if itemSpawned == 2:
-                    g = Item(600, self.rect.y - 20,"Double_Jump")
-                if itemSpawned == 3:
-                    g = Item(600, self.rect.y - 20,"Bullet_Shield")
-                if itemSpawned == 4:
-                    g = Item(600, self.rect.y - 20,"Health")
-                self.game.all_sprites.add(g)
-                self.game.powerups.add(g)
+        if self.type == "Shot_Gun":
+            self.rect.x-=2
+            if self.rect.right <= 0:
+                self.rect.x += 600
+        #machine gun level
+        elif self.type == "Machine_Gun":
+            self.rect.x-=2
+            if self.rect.right <= 0:
+                self.rect.x += random.randrange(600, 700)
+                self.rect.y += random.randrange(-50, 50)
+                if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
+                    itemSpawned = random.randrange(1,5)
+                    if itemSpawned == 1:
+                        g = Item(600, self.rect.y - 20,"Grappling_Hook")
+                    if itemSpawned == 2:
+                        g = Item(600, self.rect.y - 20,"Double_Jump")
+                    if itemSpawned == 3:
+                        g = Item(600, self.rect.y - 20,"Bullet_Shield")
+                    if itemSpawned == 4:
+                        g = Item(600, self.rect.y - 20,"Health")
+                    self.game.all_sprites.add(g)
+                    self.game.powerups.add(g)
         
 
 class Ground(pg.sprite.Sprite):
