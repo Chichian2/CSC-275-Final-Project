@@ -95,14 +95,22 @@ class Player(pg.sprite.Sprite):
         if hits:
             if hits[0].typ == "Health":
                 if self.health == 1:
+                    #insert sound for Health pick up
                     self.health +=1
                     a2 = Hearts(10,40,2, self.game)
                     self.game.all_sprites.add(a2)
                 elif self.health == 2:
+                    #insert sound for Health pick up
                     self.health +=1
                     a3 = Hearts(10,70,3, self.game)
                     self.game.all_sprites.add(a3)
                 return
+            elif hits[0].typ == "Grappling_Hook":
+                #insert sound for grappling hook
+            elif hits[0].typ == "Double_Jump":
+                #Insert sound for double jump
+            elif hits[0].typ == "Bullet_Shield":
+                #Insert sound for bullet shield
             self.powerup.append(hits[0].typ)
             print(str(self.powerup))
 
@@ -110,7 +118,7 @@ class Player(pg.sprite.Sprite):
     def take_damage(self):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         if hits and hits[0].rect.x > self.rect.x+10:
-            if self.rect.y < hits[0].rect.y+20 and self.rect.y > hits[0].rect.y-20:
+            if self.rect.y < hits[0].rect.y+10 and self.rect.y > hits[0].rect.y-10:
                 self.rect.y = hits[0].rect.y-50
                 if "Bullet_Shield" in self.powerup:
                     print("worked")
@@ -166,7 +174,7 @@ class Player(pg.sprite.Sprite):
             else:
                 self.acc.x = PLAYER_ACC
         elif keys[pg.K_t]:
-            self.powerup = 1
+            self.powerup.append("Grappling_Hook")
             self.tempobj = Item(80,80,"Grappling_Hook")
         elif keys[pg.K_x]:
             if "Grappling_Hook" in self.powerup:
