@@ -1,0 +1,5 @@
+BulletN
+MachineGun
+8
+2
+100

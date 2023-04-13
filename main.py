@@ -1,5 +1,6 @@
 import pygame as pg
 import random
+from os import path
 from settings import *
 from sprites import *
 
@@ -12,6 +13,21 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
+        self.levels =['level1.txt']
+        self.level = 0
+        self.load_data()
+
+    def load_data(self):
+        print("load data")
+        game_folder = path.dirname(__file__)
+        level_folder = path.join(game_folder,'level')
+        self.map_data = []
+        self.map_data.clear()
+        with open(path.join(level_folder, self.levels[self.level]), 'rt') as f:
+            print(f)
+            for line in f:
+                self.map_data.append(line)
+        self.new()
 
     def new(self):
         # start a new game
@@ -34,10 +50,22 @@ class Game:
             g = Ground(*ground)
             self.all_sprites.add(g)
             self.ground.add(g)
-        for plat in PLATFORM_LIST:
-            p = Platform(*plat,self)
-            self.all_sprites.add(p)
-            self.platforms.add(p)
+        print(self.map_data[1])
+        print(self.map_data)
+        if self.map_data[1] == "MachineGun\n":
+            print("worked")
+            for plat in MGPLATFORM_LIST:
+                p = Platform(*plat,self)
+                self.all_sprites.add(p)
+                self.platforms.add(p)
+        elif self.map_data[1] == "ShotGun\n":
+            for plat in SGPLATFORM_LIST:
+                p = Platform(*plat,self)
+                self.all_sprites.add(p)
+                self.platforms.add(p)
+        self.paused = False
+        self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
+        self.dim_screen.fill((0, 0, 0, 180))
         self.run()
 
     def run(self):
@@ -46,7 +74,8 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events()
-            self.update()
+            if not self.paused:
+                self.update()
             self.draw()
 
     def update(self):
@@ -89,6 +118,8 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.player.jump()
+                if event.key == pg.K_p:
+                    self.paused = not self.paused
 
     def draw(self):
         # Game Loop - draw
@@ -97,6 +128,9 @@ class Game:
         # draws line for grappling hook
         if self.player.movingx:
             pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
+        #pause game
+        if self.paused:
+            self.screen.blit(self.dim_screen, (0,0))
         # *after* drawing everything, flip the display
         pg.display.flip()
 

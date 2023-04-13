@@ -105,12 +105,12 @@ class Player(pg.sprite.Sprite):
                     a3 = Hearts(10,70,3, self.game)
                     self.game.all_sprites.add(a3)
                 return
-            elif hits[0].typ == "Grappling_Hook":
-                #insert sound for grappling hook
-            elif hits[0].typ == "Double_Jump":
-                #Insert sound for double jump
-            elif hits[0].typ == "Bullet_Shield":
-                #Insert sound for bullet shield
+##            elif hits[0].typ == "Grappling_Hook":
+##                #insert sound for grappling hook
+##            elif hits[0].typ == "Double_Jump":
+##                #Insert sound for double jump
+##            elif hits[0].typ == "Bullet_Shield":
+##                #Insert sound for bullet shield
             self.powerup.append(hits[0].typ)
             print(str(self.powerup))
 
