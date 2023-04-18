@@ -13,14 +13,14 @@ PLAYER_GRAV = 0.8
 
 # Starting platforms
     #Shotgun Level
-SGPLATFORM_LIST = [(WIDTH, HEIGHT-80, 150, 20),
-                 (WIDTH, (HEIGHT*3/4)-70, 150, 20),
-                 (WIDTH, (HEIGHT/2)-60, 150, 20),
-                 (WIDTH, (HEIGHT/4)-50, 150, 20),
-                 (WIDTH+300, HEIGHT-80, 150, 20),
-                 (WIDTH+300, (HEIGHT*3/4)-70, 150, 20),
-                 (WIDTH+300, (HEIGHT/2)-60, 150, 20),
-                 (WIDTH+300, (HEIGHT/4)-50, 150, 20)]
+SGPLATFORM_LIST = [(WIDTH, HEIGHT-80, 40, 20),
+                 (WIDTH, (HEIGHT*3/4)-70, 40, 20),
+                 (WIDTH, (HEIGHT/2)-60, 40, 20),
+                 (WIDTH, (HEIGHT/4)-50, 40, 20),
+                 (WIDTH+300, HEIGHT-80, 40, 20),
+                 (WIDTH+300, (HEIGHT*3/4)-70, 40, 20),
+                 (WIDTH+300, (HEIGHT/2)-60, 40, 20),
+                 (WIDTH+300, (HEIGHT/4)-50, 40, 20)]
     #Machine Gun Level
 MGPLATFORM_LIST = [((random.randrange(WIDTH, WIDTH + 200)), HEIGHT-80, 150, 20),
                  ((random.randrange(WIDTH, WIDTH + 200)), (HEIGHT*3/4)-70, 150, 20),

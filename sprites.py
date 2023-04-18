@@ -125,24 +125,33 @@ class Player(pg.sprite.Sprite):
             self.powerup.append(hits[0].typ)
             print(str(self.powerup))
 
+    def deal_damage(self):
+        self.health-=1
+        if self.health <= 0:
+            self.effects_sounds['Death'].play()
+            time.sleep(2)
+            if self.game.playing:
+                    self.game.playing = False
+            self.game.running = False
+
     #Checks collision to see if player takes damage
     def take_damage(self):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         if hits and hits[0].rect.x > self.rect.x+10:
-            if self.rect.y < hits[0].rect.y+10 and self.rect.y > hits[0].rect.y-10:
+            if self.rect.y < (hits[0].rect.y + hits[0].height/2) and self.rect.y > (hits[0].rect.y - hits[0].height/2):
                 self.rect.y = hits[0].rect.y-50
                 self.effects_sounds['Damage'].play()
                 if "Bullet_Shield" in self.powerup:
                     print("worked")
                     self.powerup.remove("Bullet_Shield")
                     return
-                self.health-=1
-                if self.health <= 0:
-                    self.effects_sounds['Death'].play()
-                    time.sleep(2)
-                    if self.game.playing:
-                        self.game.playing = False
-                    self.game.running = False
+                self.deal_damage()
+                
+    def fall(self):
+        if self.rect.y >= HEIGHT:
+            obj = random.choice(self.game.platforms.sprites())
+            self.pos = vec(obj.rect.x, obj.rect.y+40)
+            self.deal_damage()
 
     def jump(self):
         # jump only if standing on a platform or the ground or you have double jump power up.
@@ -162,6 +171,7 @@ class Player(pg.sprite.Sprite):
         self.acc = vec(0, PLAYER_GRAV)
         self.take_damage()
         self.collide_with_powerup()
+        self.fall()
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
             self.moving_left = True
@@ -309,7 +319,20 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
+
+    def item_spawn(self):
+        if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
+                    itemSpawned = random.randrange(1,5)
+                    if itemSpawned == 1:
+                        g = Item(600, self.rect.y - 20,"Grappling_Hook")
+                    if itemSpawned == 2:
+                        g = Item(600, self.rect.y - 20,"Double_Jump")
+                    if itemSpawned == 3:
+                        g = Item(600, self.rect.y - 20,"Bullet_Shield")
+                    if itemSpawned == 4:
+                        g = Item(600, self.rect.y - 20,"Health")
+                    self.game.all_sprites.add(g)
+                    self.game.powerups.add(g)
 
     def update_animation(self):
         #update animation
@@ -334,24 +357,14 @@ class Platform(pg.sprite.Sprite):
             self.rect.x-=2
             if self.rect.right <= 0:
                 self.rect.x += 600
+                self.item_spawn()
         #machine gun level
         elif self.type == "Machine_Gun":
             self.rect.x-=2
             if self.rect.right <= 0:
                 self.rect.x += random.randrange(600, 700)
                 self.rect.y += random.randrange(-50, 50)
-                if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
-                    itemSpawned = random.randrange(1,5)
-                    if itemSpawned == 1:
-                        g = Item(600, self.rect.y - 20,"Grappling_Hook")
-                    if itemSpawned == 2:
-                        g = Item(600, self.rect.y - 20,"Double_Jump")
-                    if itemSpawned == 3:
-                        g = Item(600, self.rect.y - 20,"Bullet_Shield")
-                    if itemSpawned == 4:
-                        g = Item(600, self.rect.y - 20,"Health")
-                    self.game.all_sprites.add(g)
-                    self.game.powerups.add(g)
+                self.item_spawn()
         
 
 class Ground(pg.sprite.Sprite):
@@ -362,6 +375,12 @@ class Ground(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.width = w
+
+    def update(self):
+        self.rect.x -=2
+        if self.rect.x + self.width < 0:
+            self.kill()
 
 #Class to handle all Items
 class Item(pg.sprite.Sprite):
