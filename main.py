@@ -67,6 +67,7 @@ class Game:
         self.paused = False
         self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 180))
+        self.spawnrate = int(self.map_data[2])
         self.run()
 
     def run(self):

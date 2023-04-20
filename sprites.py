@@ -151,7 +151,7 @@ class Player(pg.sprite.Sprite):
         if self.rect.y >= HEIGHT:
             obj = random.choice(self.game.platforms.sprites())
             self.pos = vec(obj.rect.x, obj.rect.y+40)
-            self.deal_damage()
+            #self.deal_damage()
 
     def jump(self):
         # jump only if standing on a platform or the ground or you have double jump power up.
@@ -321,7 +321,7 @@ class Platform(pg.sprite.Sprite):
         self.rect.y = y
 
     def item_spawn(self):
-        if random.randrange(1,100) > 80 and self.game.player.powerup != 1:
+        if random.randrange(1,100) > self.game.spawnrate and self.game.player.powerup != 1:
                     itemSpawned = random.randrange(1,5)
                     if itemSpawned == 1:
                         g = Item(600, self.rect.y - 20,"Grappling_Hook")
@@ -395,9 +395,11 @@ class Item(pg.sprite.Sprite):
         self.tween = tween.easeInOutSine
         self.step = 0
         self.dir = 1
+        self.move = True
 
     def update(self):
-        self.rect.centerx-=3
+        if self.move:
+            self.rect.centerx-=3
         #bobing motion
         offset = BOB_RANGE * (self.tween(self.step / BOB_RANGE) - 0.5)
         self.rect.centery = self.pos.y + offset * self.dir
