@@ -70,7 +70,7 @@ class Player(pg.sprite.Sprite):
         for plat in self.game.platforms:
             self.acc.y = 0
             # condition that was on if statement plat.rect.x > self.tempx and plat.rect.x < self.pos.x + 200
-            if (plat.rect.x + plat.width/2) > self.pos.x and plat.rect.x < WIDTH and plat.rect.y < self.pos.y:
+            if (plat.rect.x + plat.width/2) > self.pos.x and (plat.rect.x + (plat.width/2)) < WIDTH and plat.rect.y < self.pos.y:
                 lengthx = ((plat.rect.x + (plat.width/2)) - self.pos.x)
                 lengthy = (self.pos.y - (plat.rect.y + 60))
                 if(math.sqrt((lengthx**2) + (lengthy**2)) <= length):
@@ -126,6 +126,7 @@ class Player(pg.sprite.Sprite):
             print(str(self.powerup))
 
     def deal_damage(self):
+        print(self.health)
         self.health-=1
         if self.health <= 0:
             self.effects_sounds['Death'].play()
@@ -137,21 +138,28 @@ class Player(pg.sprite.Sprite):
     #Checks collision to see if player takes damage
     def take_damage(self):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-        if hits and hits[0].rect.x > self.rect.x+10:
-            if self.rect.y < (hits[0].rect.y + hits[0].height/2) and self.rect.y > (hits[0].rect.y - hits[0].height/2):
-                self.rect.y = hits[0].rect.y-50
-                self.effects_sounds['Damage'].play()
-                if "Bullet_Shield" in self.powerup:
-                    print("worked")
-                    self.powerup.remove("Bullet_Shield")
-                    return
-                self.deal_damage()
+        if hits:
+            for hit in hits:
+                if hit.rect.x > self.rect.x+10:
+                    if self.rect.y < (hit.rect.y + hit.height/2) and self.rect.y > (hit.rect.y - hit.height/2):
+                        self.pos.y = hit.rect.y-50
+                        self.effects_sounds['Damage'].play()
+                        if "Bullet_Shield" in self.powerup:
+                            print("worked")
+                            self.powerup.remove("Bullet_Shield")
+                            return
+                        self.deal_damage()
+                        break
                 
     def fall(self):
         if self.rect.y >= HEIGHT:
             obj = random.choice(self.game.platforms.sprites())
-            self.pos = vec(obj.rect.x, obj.rect.y+40)
-            #self.deal_damage()
+            if obj.rect.x + obj.width > WIDTH or obj.rect.x < 0:
+                self.fall()
+            else:
+                #self.vel = vac(0,PLAYER_GRAV)
+                self.pos = vec(obj.rect.x, obj.rect.y-50)
+                self.deal_damage()
 
     def jump(self):
         # jump only if standing on a platform or the ground or you have double jump power up.
@@ -173,7 +181,9 @@ class Player(pg.sprite.Sprite):
         self.collide_with_powerup()
         self.fall()
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT]:
+        if keys[pg.K_x] and "Grappling_Hook" in self.powerup:
+            self.grappling_math()
+        elif keys[pg.K_LEFT]:
             self.moving_left = True
             if keys[pg.K_LSHIFT]:
                 self.acc.x = -PLAYER_ACC*2
@@ -200,9 +210,6 @@ class Player(pg.sprite.Sprite):
         elif keys[pg.K_t]:
             self.powerup.append("Grappling_Hook")
             self.tempobj = Item(80,80,"Grappling_Hook")
-        elif keys[pg.K_x]:
-            if "Grappling_Hook" in self.powerup:
-                self.grappling_math()
         elif not keys[pg.K_LEFT]:
             self.moving_left = False
         elif not keys[pg.K_RIGHT]:

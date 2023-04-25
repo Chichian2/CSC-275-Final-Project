@@ -45,14 +45,18 @@ class Game:
         self.all_sprites.add(a1)
         self.all_sprites.add(a2)
         self.all_sprites.add(a3)
+        
         self.all_sprites.add(self.powerups)
         self.all_sprites.add(self.player)
+        
         for ground in GROUND:
             g = Ground(*ground)
             self.all_sprites.add(g)
             self.ground.add(g)
         print(self.map_data[1])
         print(self.map_data)
+        self.distance = int(self.map_data[3])
+        pg.time.set_timer(pg.USEREVENT, 1000)
         if self.map_data[1] == "MachineGun":
             print("worked")
             for plat in MGPLATFORM_LIST:
@@ -84,7 +88,6 @@ class Game:
         # Game Loop - Update
         self.all_sprites.update()
         self.platforms.update()
-        
         # check if player hits a platform
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
@@ -113,6 +116,8 @@ class Game:
         # Game Loop - events
         for event in pg.event.get():
             # check for closing window
+            if event.type == pg.USEREVENT:
+                self.distance -= 1
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False

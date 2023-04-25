@@ -1,5 +1,4 @@
 BulletN
-ShotGun
-50
-2
-100
+MachineGun
+80
+60
