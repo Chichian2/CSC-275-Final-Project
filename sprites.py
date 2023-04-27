@@ -358,20 +358,21 @@ class Platform(pg.sprite.Sprite):
                 self.frame_index = 0
 
     def update(self):
-        #shotgun level
-        self.update_animation()
-        if self.type == "Shot_Gun":
-            self.rect.x-=2
-            if self.rect.right <= 0:
-                self.rect.x += 600
-                self.item_spawn()
-        #machine gun level
-        elif self.type == "Machine_Gun":
-            self.rect.x-=2
-            if self.rect.right <= 0:
-                self.rect.x += random.randrange(600, 700)
-                self.rect.y += random.randrange(-50, 50)
-                self.item_spawn()
+        if not self.game.bossTime:
+            #shotgun level
+            self.update_animation()
+            if self.type == "Shot_Gun":
+                self.rect.x-=2
+                if self.rect.right <= 0:
+                    self.rect.x += 600
+                    self.item_spawn()
+            #machine gun level
+            elif self.type == "Machine_Gun":
+                self.rect.x-=2
+                if self.rect.right <= 0:
+                    self.rect.x += random.randrange(600, 700)
+                    self.rect.y += random.randrange(-50, 50)
+                    self.item_spawn()
         
 
 class Ground(pg.sprite.Sprite):

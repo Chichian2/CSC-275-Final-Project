@@ -1,0 +1,4 @@
+BulletN
+ShotGun
+60
+40

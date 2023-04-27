@@ -14,7 +14,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
-        self.levels =['level1.txt']
+        self.levels =['level1.txt','level2.txt']
         self.level = 0
         self.load_data()
 
@@ -48,6 +48,8 @@ class Game:
         
         self.all_sprites.add(self.powerups)
         self.all_sprites.add(self.player)
+
+        self.bossTime = False
         
         for ground in GROUND:
             g = Ground(*ground)
@@ -56,6 +58,8 @@ class Game:
         print(self.map_data[1])
         print(self.map_data)
         self.distance = int(self.map_data[3])
+        self.text = self.map_data[3].rjust(3)
+        self.font = pg.font.SysFont('Consolas', 30)
         pg.time.set_timer(pg.USEREVENT, 1000)
         if self.map_data[1] == "MachineGun":
             print("worked")
@@ -118,6 +122,14 @@ class Game:
             # check for closing window
             if event.type == pg.USEREVENT:
                 self.distance -= 1
+                self.text = str(self.distance).rjust(3)
+                if self.distance == 0:
+                    self.level +=1
+                    if self.level == len(self.levels):
+                        self.level = 0
+                    self.load_data()
+                if self.distance == 0 :
+                    self.bossTime = True
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
@@ -132,6 +144,7 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        self.screen.blit(self.font.render(self.text, True, (255, 255, 255)), (32, 48))
         # draws line for grappling hook
         if self.player.movingx:
             pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
