@@ -22,6 +22,8 @@ class Game:
         print("load data")
         game_folder = path.dirname(__file__)
         level_folder = path.join(game_folder,'level')
+        self.img_folder = path.join(game_folder,'img')
+        self.item_folder = path.join(self.img_folder,'Items')
         self.map_data = []
         self.map_data.clear()
         with open(path.join(level_folder, self.levels[self.level]), 'rt') as f:
@@ -36,7 +38,6 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.ground = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
-        self.powerups.add(Item(70,80,"Grappling_Hook"))
         self.player = Player(self)
         #Hearts
         a1 = Hearts(10,10,1, self)
@@ -123,11 +124,11 @@ class Game:
             if event.type == pg.USEREVENT:
                 self.distance -= 1
                 self.text = str(self.distance).rjust(3)
-                if self.distance == 0:
-                    self.level +=1
-                    if self.level == len(self.levels):
-                        self.level = 0
-                    self.load_data()
+##                if self.distance == 0:
+##                    self.level +=1
+##                    if self.level == len(self.levels):
+##                        self.level = 0
+##                    self.load_data()
                 if self.distance == 0 :
                     self.bossTime = True
             if event.type == pg.QUIT:

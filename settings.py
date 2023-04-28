@@ -53,7 +53,7 @@ DISTFROMBOTPLAT = 60
 SPEEDMULT = 0.07
 
 #Items
-ITEM_IMAGE = {"Grappling_Hook": RED, "Double_Jump": BLUE, "Bullet_Shield": LIGHTBLUE, "Health": GREEN}
+ITEM_IMAGE = {"Grappling_Hook": 'Grappling_Hook.png', "Double_Jump": 'Double_Jump.png', "Bullet_Shield": 'Sheild.png', "Health": 'Heart.png'}
 BOB_RANGE = 2
 BOB_SPEED = 0.1
 

@@ -331,13 +331,13 @@ class Platform(pg.sprite.Sprite):
         if random.randrange(1,100) > self.game.spawnrate and self.game.player.powerup != 1:
                     itemSpawned = random.randrange(1,5)
                     if itemSpawned == 1:
-                        g = Item(600, self.rect.y - 20,"Grappling_Hook")
+                        g = Item(600, self.rect.y - 20,"Grappling_Hook",self.game)
                     if itemSpawned == 2:
-                        g = Item(600, self.rect.y - 20,"Double_Jump")
+                        g = Item(600, self.rect.y - 20,"Double_Jump",self.game)
                     if itemSpawned == 3:
-                        g = Item(600, self.rect.y - 20,"Bullet_Shield")
+                        g = Item(600, self.rect.y - 20,"Bullet_Shield",self.game)
                     if itemSpawned == 4:
-                        g = Item(600, self.rect.y - 20,"Health")
+                        g = Item(600, self.rect.y - 20,"Health",self.game)
                     self.game.all_sprites.add(g)
                     self.game.powerups.add(g)
 
@@ -373,6 +373,9 @@ class Platform(pg.sprite.Sprite):
                     self.rect.x += random.randrange(600, 700)
                     self.rect.y += random.randrange(-50, 50)
                     self.item_spawn()
+        else:
+            self.update_animation()
+            self.rect.x -= 2
         
 
 class Ground(pg.sprite.Sprite):
@@ -392,10 +395,10 @@ class Ground(pg.sprite.Sprite):
 
 #Class to handle all Items
 class Item(pg.sprite.Sprite):
-    def __init__(self, x, y, typ):
+    def __init__(self, x, y, typ,game):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((20,20))
-        self.image.fill(ITEM_IMAGE[typ])
+        self.image = pg.image.load(path.join(game.item_folder, ITEM_IMAGE[typ])).convert_alpha()
+        self.image = pg.transform.scale(self.image, (25, 25))
         self.rect = self.image.get_rect()
         self.pos = vec(x,y)
         self.rect.center = (x,y)
@@ -421,8 +424,8 @@ class Item(pg.sprite.Sprite):
 class Hearts(pg.sprite.Sprite):
     def __init__(self, x, y, number, game):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((20, 20))
-        self.image.fill(GREEN)
+        self.image = pg.image.load(path.join(game.item_folder, 'Heart.png')).convert_alpha()
+        self.image = pg.transform.scale(self.image, (25, 25))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
