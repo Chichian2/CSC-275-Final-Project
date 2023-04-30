@@ -16,6 +16,9 @@ class Player(pg.sprite.Sprite):
         self.image = pg.Surface((30, 40))
         self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
+        self.grappling_hook_count = 0
+        self.double_jump_count = 0
+        self.bullet_shield_count = 0
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
@@ -64,6 +67,7 @@ class Player(pg.sprite.Sprite):
 
     def grappling_math(self):
         self.powerup.remove("Grappling_Hook")
+        self.grappling_hook_count -= 1
         self.tempx = self.pos.x
         self.tempy = self.pos.y
         length = RANGE
@@ -104,12 +108,12 @@ class Player(pg.sprite.Sprite):
         if hits:
             if hits[0].typ == "Health":
                 if self.health == 1:
-                    #insert sound for Health pick up
+                    self.effects_sounds['Health'].play()
                     self.health +=1
                     a2 = Hearts(10,40,2, self.game)
                     self.game.all_sprites.add(a2)
                 elif self.health == 2:
-                    #insert sound for Health pick up
+                    self.effects_sounds['Health'].play()
                     self.health +=1
                     a3 = Hearts(10,70,3, self.game)
                     self.game.all_sprites.add(a3)
@@ -118,10 +122,13 @@ class Player(pg.sprite.Sprite):
                 return
             elif hits[0].typ == "Grappling_Hook":
                 self.effects_sounds['Grappling_Hook'].play()
+                self.grappling_hook_count += 1
             elif hits[0].typ == "Double_Jump":
                 self.effects_sounds['Double_Jump'].play()
+                self.double_jump_count += 1
             elif hits[0].typ == "Bullet_Shield":
                 self.effects_sounds['Bullet_Shield'].play()
+                self.bullet_shield_count += 1
             self.powerup.append(hits[0].typ)
             print(str(self.powerup))
 
@@ -147,6 +154,7 @@ class Player(pg.sprite.Sprite):
                         if "Bullet_Shield" in self.powerup:
                             print("worked")
                             self.powerup.remove("Bullet_Shield")
+                            self.bullet_shield_count -= 1
                             return
                         self.deal_damage()
                         break
@@ -173,6 +181,7 @@ class Player(pg.sprite.Sprite):
             self.vel.y = -20
         elif"Double_Jump" in self.powerup:
             self.powerup.remove("Double_Jump")
+            self.double_jump_count -= 1
             self.vel.y = -20
 
     def update(self):

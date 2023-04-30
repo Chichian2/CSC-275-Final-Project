@@ -146,6 +146,12 @@ class Game:
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         self.screen.blit(self.font.render(self.text, True, (255, 255, 255)), (32, 48))
+        self.screen.blit(pg.image.load(path.join(self.item_folder, 'Grappling_Hook.png')), (100, 20))
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.grappling_hook_count), True, (255, 255, 255), (0, 0, 0)), (115, 30))        
+        self.screen.blit(pg.image.load(path.join(self.item_folder, 'Double_Jump.png')), (150, 20))
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.double_jump_count), True, (255, 255, 255), (0, 0, 0)), (165, 30))         
+        self.screen.blit(pg.image.load(path.join(self.item_folder, 'Sheild.png')), (200, 20))
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.bullet_shield_count), True, (255, 255, 255), (0, 0, 0)), (215, 30))
         # draws line for grappling hook
         if self.player.movingx:
             pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
