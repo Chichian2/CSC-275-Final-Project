@@ -122,15 +122,13 @@ class Game:
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.USEREVENT:
-                self.distance -= 1
                 self.text = str(self.distance).rjust(3)
-##                if self.distance == 0:
-##                    self.level +=1
-##                    if self.level == len(self.levels):
-##                        self.level = 0
-##                    self.load_data()
-                if self.distance == 0 :
+                if self.distance == 0 and not self.bossTime:
+                    boss = Boss(self.map_data[1],self)
+                    self.all_sprites.add(boss)
                     self.bossTime = True
+                else:
+                    self.distance -= 1
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False

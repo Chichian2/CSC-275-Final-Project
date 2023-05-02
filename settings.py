@@ -59,3 +59,6 @@ BOB_SPEED = 0.1
 
 #Sounds
 EFFECT_SOUNDS = {'Grappling_Hook': 'Grappling_Hook_Powerup.wav','Double_Jump': 'Jump.wav', 'Bullet_Shield': 'Bullet_Shield.wav', 'Health': 'Health.wav', 'Damage': 'Damage.wav', 'Death': 'Death.wav'}
+
+#Boss images
+BOSS_IMAGE = {'MachineGun':'Uzi.png','ShotGun':'Crossbow.png','CrossBow':'Crossbow.png'}

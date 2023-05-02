@@ -384,7 +384,8 @@ class Platform(pg.sprite.Sprite):
                     self.item_spawn()
         else:
             self.update_animation()
-            self.rect.x -= 2
+            if self.rect.x+self.width > 0:
+                self.rect.x -= 2
         
 
 class Ground(pg.sprite.Sprite):
@@ -444,3 +445,24 @@ class Hearts(pg.sprite.Sprite):
     def update(self):
         if self.game.player.health < self.number:
             self.kill()
+
+class Boss(pg.sprite.Sprite):
+    def __init__(self, typ, game):
+        pg.sprite.Sprite.__init__(self)
+        boss_folder = path.join(game.img_folder,'Bosses')
+        self.image = pg.image.load(path.join(boss_folder, BOSS_IMAGE[typ])).convert_alpha()
+        self.image = pg.transform.scale(self.image, (100,100))
+        self.rect = self.image.get_rect()
+        self.rect.x = 500
+        self.rect.y = 300
+        self.game = game
+
+    def update(self):
+        if self.rect.x > 380:
+            self.rect.x -= 2
+        else:
+            if self.game.player.pos.y > self.rect.y:
+                self.rect.y +=1
+            else:
+                self.rect.y -= 1
+    
