@@ -38,6 +38,7 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.ground = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
+        self.boss_sprite = pg.sprite.Group()
         self.player = Player(self)
         #Hearts
         a1 = Hearts(10,10,1, self)
@@ -51,6 +52,7 @@ class Game:
         self.all_sprites.add(self.player)
 
         self.bossTime = False
+        self.bulletTimers = []
         
         for ground in GROUND:
             g = Ground(*ground)
@@ -124,11 +126,16 @@ class Game:
             if event.type == pg.USEREVENT:
                 self.text = str(self.distance).rjust(3)
                 if self.distance == 0 and not self.bossTime:
-                    boss = Boss(self.map_data[1],self)
-                    self.all_sprites.add(boss)
+                    self.boss = Boss(self.map_data[1],self)
+                    self.boss_sprite.add(self.boss)
+                    self.all_sprites.add(self.boss_sprite)
                     self.bossTime = True
                 else:
-                    self.distance -= 1
+                    if self.distance > 0:
+                        self.distance -= 1
+                    else:
+                        for i, timers in enumerate(self.bulletTimers):
+                            self.bulletTimers[i] = timers - 1
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False

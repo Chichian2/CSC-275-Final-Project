@@ -22,6 +22,7 @@ class Player(pg.sprite.Sprite):
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
+        
         #power up items
         self.powerup = []
 
@@ -36,6 +37,7 @@ class Player(pg.sprite.Sprite):
         self.in_air=False
         self.moving_left = False
         self.moving_right = False
+
 
         #load all images for player
         scale=2
@@ -132,6 +134,14 @@ class Player(pg.sprite.Sprite):
             self.powerup.append(hits[0].typ)
             print(str(self.powerup))
 
+    def collide_with_boss(self):
+        hits = pg.sprite.spritecollide(self, self.game.boss_sprite, False)
+        if hits:
+            self.game.level += 1
+            if self.game.level == len(self.game.levels):
+                self.game.level = 0
+            self.game.load_data()
+
     def deal_damage(self):
         print(self.health)
         self.health-=1
@@ -163,7 +173,10 @@ class Player(pg.sprite.Sprite):
         if self.rect.y >= HEIGHT:
             obj = random.choice(self.game.platforms.sprites())
             if obj.rect.x + obj.width > WIDTH or obj.rect.x < 0:
-                self.fall()
+                try:
+                    self.fall()
+                except:
+                    self.pos = vec(0,0)
             else:
                 #self.vel = vac(0,PLAYER_GRAV)
                 self.pos = vec(obj.rect.x, obj.rect.y-50)
@@ -179,7 +192,7 @@ class Player(pg.sprite.Sprite):
             self.vel.y = -20
         elif hits2:
             self.vel.y = -20
-        elif"Double_Jump" in self.powerup:
+        elif "Double_Jump" in self.powerup:
             self.powerup.remove("Double_Jump")
             self.double_jump_count -= 1
             self.vel.y = -20
@@ -187,6 +200,7 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.acc = vec(0, PLAYER_GRAV)
         self.take_damage()
+        self.collide_with_boss()
         self.collide_with_powerup()
         self.fall()
         keys = pg.key.get_pressed()
@@ -310,7 +324,9 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.width = w
         self.height = h
-        self.type =typ
+        self.type = typ
+        self.offScreen = False
+        self.timerPos = 0
 
         #for animation
         self.animation_list = []
@@ -386,6 +402,17 @@ class Platform(pg.sprite.Sprite):
             self.update_animation()
             if self.rect.x+self.width > 0:
                 self.rect.x -= 2
+            else:
+                if self.type == "Machine_Gun":
+                    if not self.offScreen:
+                        self.game.bulletTimers.append(random.randrange(1,15))
+                        self.timerPos = len(self.game.bulletTimers) - 1
+                    self.offScreen = True
+                    if self.offScreen and self.game.bulletTimers[self.timerPos] <= 0:
+                        self.rect.x = self.game.boss.rect.x
+                        self.rect.y = self.game.boss.rect.y + 20 + random.randrange(-50,50)
+                
+                
         
 
 class Ground(pg.sprite.Sprite):
@@ -451,7 +478,7 @@ class Boss(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         boss_folder = path.join(game.img_folder,'Bosses')
         self.image = pg.image.load(path.join(boss_folder, BOSS_IMAGE[typ])).convert_alpha()
-        self.image = pg.transform.scale(self.image, (100,100))
+        self.image = pg.transform.scale(self.image, (200,200))
         self.rect = self.image.get_rect()
         self.rect.x = 500
         self.rect.y = 300

@@ -1,4 +1,4 @@
 BulletN
 MachineGun
 80
-40
+20
