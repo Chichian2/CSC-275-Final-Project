@@ -10,6 +10,7 @@ class Game:
         # initialize game window, etc
         pg.init()
         pg.mixer.init()
+        self.move_background = 0
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
@@ -148,15 +149,17 @@ class Game:
 
     def draw(self):
         # Game Loop - draw
-        self.screen.fill(BLACK)
+        self.screen.blit(pg.transform.scale(pg.image.load(path.join(self.img_folder, 'Background.png')), (5*3076, 5*128)), (self.move_background, 0))
+        if not self.paused:
+            self.move_background -= 9
         self.all_sprites.draw(self.screen)
         self.screen.blit(self.font.render(self.text, True, (255, 255, 255)), (32, 48))
         self.screen.blit(pg.image.load(path.join(self.item_folder, 'Grappling_Hook.png')), (100, 20))
-        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.grappling_hook_count), True, (255, 255, 255), (0, 0, 0)), (115, 30))        
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.grappling_hook_count), True, WHITE, None), (115, 30))        
         self.screen.blit(pg.image.load(path.join(self.item_folder, 'Double_Jump.png')), (150, 20))
-        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.double_jump_count), True, (255, 255, 255), (0, 0, 0)), (165, 30))         
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.double_jump_count), True, WHITE, None), (165, 30))         
         self.screen.blit(pg.image.load(path.join(self.item_folder, 'Sheild.png')), (200, 20))
-        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.bullet_shield_count), True, (255, 255, 255), (0, 0, 0)), (215, 30))
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 12).render(str(self.player.bullet_shield_count), True, WHITE, None), (215, 30))
         # draws line for grappling hook
         if self.player.movingx:
             pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
