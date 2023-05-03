@@ -137,6 +137,7 @@ class Player(pg.sprite.Sprite):
     def collide_with_boss(self):
         hits = pg.sprite.spritecollide(self, self.game.boss_sprite, False)
         if hits:
+            self.game.move_background = 0
             self.game.level += 1
             if self.game.level == len(self.game.levels):
                 self.game.level = 0

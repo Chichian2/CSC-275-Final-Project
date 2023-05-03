@@ -150,7 +150,7 @@ class Game:
     def draw(self):
         # Game Loop - draw
         self.screen.blit(pg.transform.scale(pg.image.load(path.join(self.img_folder, 'Background.png')), (5*3076, 5*128)), (self.move_background, 0))
-        if not self.paused:
+        if (self.move_background >= -13000) and (not self.paused):
             self.move_background -= 9
         self.all_sprites.draw(self.screen)
         self.screen.blit(self.font.render(self.text, True, (255, 255, 255)), (32, 48))
