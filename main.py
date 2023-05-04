@@ -48,7 +48,9 @@ class Game:
         self.all_sprites.add(a1)
         self.all_sprites.add(a2)
         self.all_sprites.add(a3)
-        
+
+        self.background_img = pg.image.load(path.join(self.img_folder, 'Background.png'))
+        self.background_with_size = pg.transform.scale(self.background_img, (5*3076, 5*128))
         self.all_sprites.add(self.powerups)
         self.all_sprites.add(self.player)
 
@@ -149,7 +151,7 @@ class Game:
 
     def draw(self):
         # Game Loop - draw
-        self.screen.blit(pg.transform.scale(pg.image.load(path.join(self.img_folder, 'Background.png')), (5*3076, 5*128)), (self.move_background, 0))
+        self.screen.blit(self.background_with_size, (self.move_background, 0))
         if (self.move_background >= -13000) and (not self.paused):
             self.move_background -= 9
         self.all_sprites.draw(self.screen)
