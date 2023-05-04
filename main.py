@@ -15,8 +15,8 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
-        self.levels =['level1.txt','level2.txt']
-        self.level = 0
+        self.levels =['level1.txt','level2.txt','level3.txt']
+        self.level = 2
         self.load_data()
 
     def load_data(self):
@@ -76,6 +76,11 @@ class Game:
         elif self.map_data[1] == "ShotGun":
             for plat in SGPLATFORM_LIST:
                 p = Platform(*plat,self,"Shot_Gun")
+                self.all_sprites.add(p)
+                self.platforms.add(p)
+        elif self.map_data[1] == "CrossBow":
+            for plat in CBPLATFORM_LIST:
+                p = Platform(*plat,self,"Cross_Bow")
                 self.all_sprites.add(p)
                 self.platforms.add(p)
         self.paused = False

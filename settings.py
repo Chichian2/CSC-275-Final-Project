@@ -34,6 +34,8 @@ MGPLATFORM_LIST = [((random.randrange(WIDTH, WIDTH + 200)), HEIGHT-80, 150, 20),
                  ((random.randrange(WIDTH, WIDTH + 200)+300), (HEIGHT*3/4)-70, 150, 20),
                  ((random.randrange(WIDTH, WIDTH + 200)+300), (HEIGHT/2)-60, 150, 20),
                  ((random.randrange(WIDTH, WIDTH + 200)+300), (HEIGHT/4)-50, 150, 20)]
+#Crossbow Level
+CBPLATFORM_LIST = [(WIDTH, HEIGHT/2, 400, 30),(WIDTH + 600, HEIGHT/2, 400, 30)]
 
 # Ground
 GROUND = [(0, HEIGHT - 40, WIDTH, 40)]

@@ -336,7 +336,10 @@ class Platform(pg.sprite.Sprite):
         self.update_time = pg.time.get_ticks()
 
         scale=2
-        bullet_types = ['NBullet']
+        if typ == "Cross_Bow":
+            bullet_types = ['CBolt']
+        else:
+            bullet_types = ['NBullet']
         for animation in bullet_types:
             #reset temporary list of images
             temp_list = []
@@ -398,6 +401,12 @@ class Platform(pg.sprite.Sprite):
                 if self.rect.right <= 0:
                     self.rect.x += random.randrange(600, 700)
                     self.rect.y += random.randrange(-50, 50)
+                    self.item_spawn()
+            elif self.type == "Cross_Bow":
+                self.rect.x-=2
+                if self.rect.right <= 0:
+                    self.rect.x = WIDTH + 200
+                    self.rect.y = self.game.player.pos.y
                     self.item_spawn()
         else:
             self.update_animation()
