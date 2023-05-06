@@ -10,6 +10,7 @@ class Game:
         # initialize game window, etc
         pg.init()
         pg.mixer.init()
+        self.paused = False
         self.move_background = 0
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
@@ -83,7 +84,6 @@ class Game:
                 p = Platform(*plat,self,"Cross_Bow")
                 self.all_sprites.add(p)
                 self.platforms.add(p)
-        self.paused = False
         self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 180))
         self.spawnrate = int(self.map_data[2])
@@ -173,6 +173,7 @@ class Game:
         #pause game
         if self.paused:
             self.screen.blit(self.dim_screen, (0,0))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Continue? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
         # *after* drawing everything, flip the display
         pg.display.flip()
 
@@ -180,14 +181,9 @@ class Game:
         # game splash/start screen
         pass
 
-    def show_go_screen(self):
-        # game over/continue
-        pass
-
 g = Game()
 g.show_start_screen()
 while g.running:
     g.new()
-    g.show_go_screen()
 
 pg.quit()

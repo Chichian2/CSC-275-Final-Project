@@ -151,7 +151,7 @@ class Player(pg.sprite.Sprite):
             time.sleep(2)
             if self.game.playing:
                     self.game.playing = False
-            self.game.running = False
+            self.game.paused = True
 
     #Checks collision to see if player takes damage
     def take_damage(self):
@@ -209,24 +209,28 @@ class Player(pg.sprite.Sprite):
             self.grappling_math()
         elif keys[pg.K_LEFT]:
             self.moving_left = True
+            self.moving_right = False
             if keys[pg.K_LSHIFT]:
                 self.acc.x = -PLAYER_ACC*2
             else:
                 self.acc.x = -PLAYER_ACC
         elif keys[pg.K_RIGHT]:
             self.moving_right = True
+            self.moving_left = False
             if keys[pg.K_LSHIFT]:
                 self.acc.x = PLAYER_ACC*2
             else:
                 self.acc.x = PLAYER_ACC
         elif keys[pg.K_a]:
             self.moving_left = True
+            self.moving_right = False
             if keys[pg.K_LSHIFT]:
                 self.acc.x = -PLAYER_ACC*2
             else:
                 self.acc.x = -PLAYER_ACC
         elif keys[pg.K_d]:
             self.moving_right = True
+            self.moving_left = False
             if keys[pg.K_LSHIFT]:
                 self.acc.x = PLAYER_ACC*2
             else:
