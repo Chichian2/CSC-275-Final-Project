@@ -16,7 +16,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
-        self.levels =['level1.txt','level2.txt','level3.txt']
+        self.levels =['level1.txt','level3.txt','level2.txt']
         self.level = 0
         self.show_start_screen()
         #self.start = True
@@ -179,13 +179,18 @@ class Game:
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Continue? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
         elif self.paused and self.start:
             self.screen.blit(self.dim_screen, (0,0))
-            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Start? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Start? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/5))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Arrow keys and space', True, WHITE, None), (10, HEIGHT/5+100))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('to move. X to use', True, WHITE, None), (10, HEIGHT/5+200))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Grappling hook.', True, WHITE, None), (10, HEIGHT/5+300))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Touch Guns', True, WHITE, None), (10, HEIGHT/5+400))
         # *after* drawing everything, flip the display
         pg.display.flip()
 
     def show_start_screen(self):
         #self.screen.blit(self.dim_screen, (0,0))
-        self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Start? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Start? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/3))
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Arrow keys and space to move.\n X to use grappling hook.', True, WHITE, None), (WIDTH/8, HEIGHT/3+300))
         self.start = True
         self.paused = True
 

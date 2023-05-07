@@ -169,6 +169,9 @@ class Player(pg.sprite.Sprite):
                             return
                         self.deal_damage()
                         break
+                if not self.moving_left and not self.moving_right:
+                    self.pos.x -=3
+                        
                 
     def fall(self):
         if self.rect.y >= HEIGHT:
@@ -180,6 +183,8 @@ class Player(pg.sprite.Sprite):
                     self.pos = vec(0,0)
             else:
                 #self.vel = vac(0,PLAYER_GRAV)
+                self.moving_left = False
+                self.moving_right = False
                 self.pos = vec(obj.rect.x, obj.rect.y-50)
                 self.deal_damage()
 
