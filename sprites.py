@@ -149,9 +149,9 @@ class Player(pg.sprite.Sprite):
         if self.health <= 0:
             self.effects_sounds['Death'].play()
             time.sleep(2)
-            if self.game.playing:
-                    self.game.playing = False
             self.game.paused = True
+            self.game.move_background = 0
+            self.game.load_data()
 
     #Checks collision to see if player takes damage
     def take_damage(self):

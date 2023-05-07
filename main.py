@@ -17,7 +17,9 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
         self.levels =['level1.txt','level2.txt','level3.txt']
-        self.level = 2
+        self.level = 0
+        self.show_start_screen()
+        #self.start = True
         self.load_data()
 
     def load_data(self):
@@ -139,7 +141,7 @@ class Game:
                     self.all_sprites.add(self.boss_sprite)
                     self.bossTime = True
                 else:
-                    if self.distance > 0:
+                    if self.distance > 0 and not self.paused:
                         self.distance -= 1
                     else:
                         for i, timers in enumerate(self.bulletTimers):
@@ -153,6 +155,7 @@ class Game:
                     self.player.jump()
                 if event.key == pg.K_p:
                     self.paused = not self.paused
+                    self.start = False
 
     def draw(self):
         # Game Loop - draw
@@ -171,15 +174,20 @@ class Game:
         if self.player.movingx:
             pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
         #pause game
-        if self.paused:
+        if self.paused and not self.start:
             self.screen.blit(self.dim_screen, (0,0))
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Continue? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
+        elif self.paused and self.start:
+            self.screen.blit(self.dim_screen, (0,0))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Start? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
         # *after* drawing everything, flip the display
         pg.display.flip()
 
     def show_start_screen(self):
-        # game splash/start screen
-        pass
+        #self.screen.blit(self.dim_screen, (0,0))
+        self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Start? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
+        self.start = True
+        self.paused = True
 
 g = Game()
 g.show_start_screen()
