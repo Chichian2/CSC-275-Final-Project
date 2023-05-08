@@ -1,3 +1,6 @@
+
+#Music by "Spring Spring" on OpenGameArt.Org
+
 import pygame as pg
 import random
 import os
@@ -28,6 +31,7 @@ class Game:
         level_folder = path.join(game_folder,'level')
         self.img_folder = path.join(game_folder,'img')
         self.item_folder = path.join(self.img_folder,'Items')
+        self.sound_folder = path.join(game_folder,'snd')
         self.map_data = []
         self.map_data.clear()
         with open(path.join(level_folder, self.levels[self.level]), 'rt') as f:
@@ -44,6 +48,7 @@ class Game:
         self.powerups = pg.sprite.Group()
         self.boss_sprite = pg.sprite.Group()
         self.player = Player(self)
+        pg.mixer.music.load(path.join(self.sound_folder, 'fight theme.ogg'))
         #Hearts
         a1 = Hearts(10,10,1, self)
         a2 = Hearts(10,40,2, self)
@@ -93,6 +98,7 @@ class Game:
 
     def run(self):
         # Game Loop
+        pg.mixer.music.play(loops=-1)
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
@@ -174,7 +180,12 @@ class Game:
         if self.player.movingx:
             pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
         #pause game
-        if self.paused and not self.start:
+        if self.paused and (not self.start) and self.level == 0:
+            self.screen.blit(self.dim_screen, (0,0))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('YOU WIN', True, WHITE, None), (WIDTH/4, HEIGHT/2))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('PLAY AGAIN?', True, WHITE, None), (WIDTH/4, (HEIGHT/2)+40))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Press P', True, WHITE, None), (WIDTH/4, (HEIGHT/2)+80))
+        elif self.paused and not self.start:
             self.screen.blit(self.dim_screen, (0,0))
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Continue? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
         elif self.paused and self.start:

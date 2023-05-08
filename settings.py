@@ -1,3 +1,6 @@
+
+#Shotgun sprite by Proxy Games on OpenGameArt.org
+
 import random
 
 # game options/settings
@@ -35,7 +38,7 @@ MGPLATFORM_LIST = [((random.randrange(WIDTH, WIDTH + 200)), HEIGHT-80, 150, 20),
                  ((random.randrange(WIDTH, WIDTH + 200)+300), (HEIGHT/2)-60, 150, 20),
                  ((random.randrange(WIDTH, WIDTH + 200)+300), (HEIGHT/4)-50, 150, 20)]
 #Crossbow Level
-CBPLATFORM_LIST = [(WIDTH, HEIGHT/2, 400, 30),(WIDTH + 600, HEIGHT/2, 400, 30)]
+CBPLATFORM_LIST = [(WIDTH, (HEIGHT/2)+40, 400, 30),(WIDTH + 600, HEIGHT/2, 400, 30)]
 
 # Ground
 GROUND = [(0, HEIGHT - 40, WIDTH, 40)]
@@ -63,4 +66,4 @@ BOB_SPEED = 0.1
 EFFECT_SOUNDS = {'Grappling_Hook': 'Grappling_Hook_Powerup.wav','Double_Jump': 'Jump.wav', 'Bullet_Shield': 'Bullet_Shield.wav', 'Health': 'Health.wav', 'Damage': 'Damage.wav', 'Death': 'Death.wav'}
 
 #Boss images
-BOSS_IMAGE = {'MachineGun':'Uzi.png','ShotGun':'Crossbow.png','CrossBow':'Crossbow.png'}
+BOSS_IMAGE = {'MachineGun':'Uzi.png','ShotGun':'Shotgun 2 2D.png','CrossBow':'Crossbow.png'}
