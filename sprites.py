@@ -140,6 +140,7 @@ class Player(pg.sprite.Sprite):
             self.game.move_background = 0
             self.game.level += 1
             if self.game.level == len(self.game.levels):
+                self.game.paused = True
                 self.game.level = 0
             self.game.load_data()
 
