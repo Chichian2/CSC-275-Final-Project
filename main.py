@@ -167,7 +167,7 @@ class Game:
         # Game Loop - draw
         self.screen.blit(self.background_with_size, (self.move_background, 0))
         if (self.move_background >= -13000) and (not self.paused):
-            self.move_background -= 9
+            self.move_background -= 1
         self.all_sprites.draw(self.screen)
         self.screen.blit(self.font.render(self.text, True, (255, 255, 255)), (32, 48))
         self.screen.blit(pg.image.load(path.join(self.item_folder, 'Grappling_Hook.png')), (100, 20))

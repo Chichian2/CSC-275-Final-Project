@@ -167,6 +167,7 @@ class Player(pg.sprite.Sprite):
                             print("worked")
                             self.powerup.remove("Bullet_Shield")
                             self.bullet_shield_count -= 1
+                            self.game.all_sprites.add(Shield_Break(self.game,self.pos))
                             return
                         self.deal_damage()
                         break
@@ -181,7 +182,10 @@ class Player(pg.sprite.Sprite):
                 try:
                     self.fall()
                 except:
-                    self.pos = vec(0,0)
+                    if self.game.bossTime:
+                        self.pos = vec(self.game.boss.rect.x,self.game.boss.rect.y-100)
+                    else:
+                        self.pos = vec(300,10)
             else:
                 #self.vel = vac(0,PLAYER_GRAV)
                 self.moving_left = False
@@ -413,10 +417,10 @@ class Platform(pg.sprite.Sprite):
                     self.rect.y += random.randrange(-50, 50)
                     self.item_spawn()
             elif self.type == "Cross_Bow":
-                self.rect.x-=2
+                self.rect.x-=3.5
                 if self.rect.right <= 0:
                     self.rect.x = WIDTH + 200
-                    self.rect.y = self.game.player.pos.y
+                    self.rect.y = self.game.player.pos.y + random.randrange(-100,100)
                     self.item_spawn()
         else:
             self.update_animation()
@@ -512,4 +516,60 @@ class Boss(pg.sprite.Sprite):
                 self.rect.y +=1
             else:
                 self.rect.y -= 1
-    
+
+class Shield_Break(pg.sprite.Sprite):
+    def __init__(self,game,pos):
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((40, 40))
+        self.game = game
+##        size = randint(20, 50)
+##        self.image = pg.transform.scale(, (size, size))
+        self.rect = self.image.get_rect()
+        self.pos = pos
+        self.rect.center = pos
+        self.spawn_time = pg.time.get_ticks()
+        # animation start variables
+        self.animation_list = []
+        self.frame_index = 0
+        self.action = 0
+        self.update_time = pg.time.get_ticks()
+
+        #load all images for player
+        scale=2
+        animation_types = ['ShieldBreak']
+        for animation in animation_types:
+            #reset temporary list of images
+            temp_list = []
+            #count number of files in files in the folder
+            num_of_frames = len(os.listdir(f'img/Items/{animation}'))
+            for i in range(num_of_frames):
+                img = pg.image.load(f'img/Items/{animation}/{i}.png').convert_alpha()
+                img = pg.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+                temp_list.append(img)
+            self.animation_list.append(temp_list)
+
+        self.image = self.animation_list[self.action][self.frame_index]
+        self.rect = self.image.get_rect()
+        self.rect.center = pos
+
+
+    def update_animation(self):
+        #update animation
+        ANIMATION_COOLDOWN = 100
+        #update image depending on current frame
+        self.image = self.animation_list[self.action][self.frame_index]
+        #check if enough time has passed since the last update
+        if pg.time.get_ticks() - self.update_time > ANIMATION_COOLDOWN:
+            self.update_time = pg.time.get_ticks()
+            self.frame_index += 1
+        #if the animation has run out the reset back to the start
+        if self.frame_index >= len(self.animation_list[self.action]):
+            if self.action == 5:
+                self.frame_index = len(self.animation_list[self.action]) - 1
+            else:
+                self.kill()
+
+    def update(self):
+        self.action = 0
+        self.update_animation()
