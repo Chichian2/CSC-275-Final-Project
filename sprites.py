@@ -142,7 +142,8 @@ class Player(pg.sprite.Sprite):
             if self.game.level == len(self.game.levels):
                 self.game.paused = True
                 #self.game.level = 0
-            self.game.load_data()
+            else:
+                self.game.load_data()
 
     def deal_damage(self):
         print(self.health)
@@ -369,6 +370,8 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.originaly = y
+        self.originalx = x
 
     def item_spawn(self):
         if random.randrange(1,100) > self.game.spawnrate and self.game.player.powerup != 1:
@@ -408,6 +411,7 @@ class Platform(pg.sprite.Sprite):
                 self.rect.x-=2
                 if self.rect.right <= 0:
                     self.rect.x += 600
+                    self.rect.y = self.originaly + random.randrange(-20, 20)
                     self.item_spawn()
             #machine gun level
             elif self.type == "Machine_Gun":
@@ -420,7 +424,7 @@ class Platform(pg.sprite.Sprite):
                 self.rect.x-=3.5
                 if self.rect.right <= 0:
                     self.rect.x = WIDTH + 200
-                    self.rect.y = self.game.player.pos.y + random.randrange(-100,100)
+                    self.rect.y = self.game.player.pos.y + random.randrange(-50,50)
                     self.item_spawn()
         else:
             self.update_animation()

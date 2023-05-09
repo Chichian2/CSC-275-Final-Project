@@ -19,7 +19,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
-        self.levels =['level1.txt','level3.txt','level2.txt']
+        self.levels =['level3.txt','level1.txt','level2.txt']
         self.level = 0
         self.show_start_screen()
         #self.start = True
