@@ -1,4 +1,5 @@
 # Sprite classes for platform game
+#Sprite art and Background art by Trace Lyle
 import pygame as pg
 import random
 import time
@@ -425,6 +426,8 @@ class Platform(pg.sprite.Sprite):
                 if self.rect.right <= 0:
                     self.rect.x = WIDTH + 200
                     self.rect.y = self.game.player.pos.y + random.randrange(-50,50)
+                    if self.rect.y < 60:
+                        self.rect.y = 60
                     self.item_spawn()
         else:
             self.update_animation()

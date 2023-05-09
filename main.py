@@ -1,5 +1,6 @@
 
 #Music by "Spring Spring" on OpenGameArt.Org
+#Sprite art and Background art by Trace Lyle
 
 import pygame as pg
 import random
@@ -160,6 +161,9 @@ class Game:
                 if event.key == pg.K_SPACE:
                     self.player.jump()
                 if event.key == pg.K_p:
+                    if self.level == 3:
+                        self.level = 0
+                        self.load_data()
                     self.paused = not self.paused
                     self.start = False
 
@@ -190,6 +194,7 @@ class Game:
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Continue? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/2))
         elif self.paused and self.start:
             self.screen.blit(self.dim_screen, (0,0))
+            self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Bullet Bounce', True, WHITE, None), (WIDTH/8, 50))
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Start? Press P', True, WHITE, None), (WIDTH/8, HEIGHT/5))
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('Arrow keys and space', True, WHITE, None), (10, HEIGHT/5+100))
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('to move. X to use', True, WHITE, None), (10, HEIGHT/5+200))
