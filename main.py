@@ -66,7 +66,7 @@ class Game:
         self.bulletTimers = []
         
         for ground in GROUND:
-            g = Ground(*ground)
+            g = Ground(*ground,self)
             self.all_sprites.add(g)
             self.ground.add(g)
         print(self.map_data[1])
@@ -180,7 +180,7 @@ class Game:
         if self.player.movingx:
             pg.draw.line(self.screen,BLUE,(self.player.pos.x,self.player.pos.y),(self.player.tempx,self.player.tempy),6)
         #pause game
-        if self.paused and (not self.start) and self.level == 0:
+        if self.paused and (not self.start) and self.level == 3:
             self.screen.blit(self.dim_screen, (0,0))
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('YOU WIN', True, WHITE, None), (WIDTH/4, HEIGHT/2))
             self.screen.blit(pg.font.Font('freesansbold.ttf', 40).render('PLAY AGAIN?', True, WHITE, None), (WIDTH/4, (HEIGHT/2)+40))

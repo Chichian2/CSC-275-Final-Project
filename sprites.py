@@ -141,7 +141,7 @@ class Player(pg.sprite.Sprite):
             self.game.level += 1
             if self.game.level == len(self.game.levels):
                 self.game.paused = True
-                self.game.level = 0
+                #self.game.level = 0
             self.game.load_data()
 
     def deal_damage(self):
@@ -215,7 +215,7 @@ class Player(pg.sprite.Sprite):
         self.collide_with_powerup()
         self.fall()
         keys = pg.key.get_pressed()
-        if keys[pg.K_x] and "Grappling_Hook" in self.powerup:
+        if (keys[pg.K_x]  or keys[pg.K_o]) and "Grappling_Hook" in self.powerup:
             self.grappling_math()
         elif keys[pg.K_LEFT]:
             self.moving_left = True
@@ -440,10 +440,10 @@ class Platform(pg.sprite.Sprite):
         
 
 class Ground(pg.sprite.Sprite):
-    def __init__(self, x, y, w, h):
+    def __init__(self, x, y, w, h,game):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((w, h))
-        self.image.fill(GREEN)
+        self.image = pg.image.load(path.join(game.img_folder, 'Table.png'))
+        self.image = pg.transform.scale(self.image, (w, h))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
